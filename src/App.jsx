@@ -41,33 +41,54 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const getNormalizedRoute = (rawPath) => {
+    let p = rawPath || "/";
+    if (p.toLowerCase().startsWith("/argpapus")) {
+      p = p.slice("/argpapus".length);
+    }
+    if (!p.startsWith("/")) {
+      p = "/" + p;
+    }
+    if (p.length > 1 && p.endsWith("/")) {
+      p = p.slice(0, -1);
+    }
+    return p;
+  };
+
+  const normalizedRoute = getNormalizedRoute(currentRoute);
+  const BASE_PATH = window.location.pathname.toLowerCase().startsWith("/argpapus") ? "/ARGPAPUS" : "";
+
   // Check if initial URL is a direct file link (e.g., /archivo/player_logs)
   useEffect(() => {
-    if (currentRoute.startsWith("/archivo/")) {
-      const fileId = currentRoute.replace("/archivo/", "");
+    if (normalizedRoute.startsWith("/archivo/")) {
+      const fileId = normalizedRoute.replace("/archivo/", "");
       const found = SERVER_FILES.find((f) => f.id === fileId || f.name === fileId);
       if (found) {
         setActiveFile(found);
       }
     }
-  }, [currentRoute]);
+  }, [normalizedRoute]);
 
   const navigateTo = (path) => {
-    window.history.pushState({}, "", path);
-    setCurrentRoute(path);
+    const fullPath = BASE_PATH + path;
+    window.history.pushState({}, "", fullPath);
+    setCurrentRoute(fullPath);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleOpenFile = (file) => {
     setActiveFile(file);
-    window.history.pushState({}, "", `/archivo/${file.id}`);
+    const fullPath = BASE_PATH + `/archivo/${file.id}`;
+    window.history.pushState({}, "", fullPath);
+    setCurrentRoute(fullPath);
   };
 
   const handleCloseFile = () => {
     setActiveFile(null);
-    if (window.location.pathname.startsWith("/archivo/")) {
-      window.history.pushState({}, "", "/archivos");
-      setCurrentRoute("/archivos");
+    if (normalizedRoute.startsWith("/archivo/")) {
+      const fullPath = BASE_PATH + "/archivos";
+      window.history.pushState({}, "", fullPath);
+      setCurrentRoute(fullPath);
     }
   };
 
@@ -78,19 +99,19 @@ export default function App() {
 
   // Determine active view
   let PageComponent = NotFoundPage;
-  if (currentRoute === "/" || currentRoute === "/inicio") {
+  if (normalizedRoute === "/" || normalizedRoute === "/inicio") {
     PageComponent = Home;
-  } else if (currentRoute === "/archivos" || currentRoute.startsWith("/archivo/")) {
+  } else if (normalizedRoute === "/archivos" || normalizedRoute.startsWith("/archivo/")) {
     PageComponent = FilesPage;
-  } else if (currentRoute === "/jugadores") {
+  } else if (normalizedRoute === "/jugadores") {
     PageComponent = PlayersPage;
-  } else if (currentRoute === "/mapas") {
+  } else if (normalizedRoute === "/mapas") {
     PageComponent = MapsPage;
-  } else if (currentRoute === "/conexiones") {
+  } else if (normalizedRoute === "/conexiones") {
     PageComponent = ConnectionsPage;
-  } else if (currentRoute === "/registros") {
+  } else if (normalizedRoute === "/registros") {
     PageComponent = LogsPage;
-  } else if (currentRoute === "/acerca") {
+  } else if (normalizedRoute === "/acerca") {
     PageComponent = AboutPage;
   }
 
@@ -108,7 +129,7 @@ export default function App() {
 
       {/* Main Framework with Sidebar and Content View */}
       <div className="main-layout">
-        <Sidebar currentRoute={currentRoute} onNavigate={navigateTo} />
+        <Sidebar currentRoute={normalizedRoute} onNavigate={navigateTo} />
 
         <main className="app-content">
           <PageComponent

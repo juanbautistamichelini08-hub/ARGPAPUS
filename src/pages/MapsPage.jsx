@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MAP_LOCATIONS } from "../data/mapsData";
 import { soundFX } from "../utils/audio";
+import worldMapImg from "../assets/world_map.jpg";
 
 export default function MapsPage() {
   const [selectedLocation, setSelectedLocation] = useState(MAP_LOCATIONS[0]);
@@ -70,7 +71,7 @@ export default function MapsPage() {
           >
             {/* World Map Image */}
             <img 
-              src="/images/world_map.jpg" 
+              src={worldMapImg} 
               alt="Minecraft World Map Cartography" 
               style={{ width: "100%", height: "auto", display: "block", filter: "contrast(1.1) brightness(0.9)" }}
             />

@@ -3,6 +3,7 @@ import { SERVER_STATUS } from "../data/serverStatusData";
 import { RECENT_LOGS } from "../data/logsData";
 import { SERVER_FILES } from "../data/filesData";
 import { soundFX } from "../utils/audio";
+import bannerImg from "../assets/banner.jpg";
 
 export default function Home({ onOpenFile, onNavigate }) {
   const [selectedLog, setSelectedLog] = useState(null);
@@ -22,7 +23,7 @@ export default function Home({ onOpenFile, onNavigate }) {
           position: "relative",
           width: "100%",
           height: "360px",
-          backgroundImage: "linear-gradient(to bottom, rgba(9, 10, 13, 0.2), rgba(9, 10, 13, 0.95)), url('/images/banner.jpg')",
+          backgroundImage: `linear-gradient(to bottom, rgba(9, 10, 13, 0.2), rgba(9, 10, 13, 0.95)), url('${bannerImg}')`,
           backgroundSize: "cover",
           backgroundPosition: "center 40%",
           display: "flex",
